@@ -16,7 +16,7 @@
 (defn -main [& args]
   (play "start")
   (let [[elapsed-ms prc] (time-ret (apply shell {:continue true} args))]
-    (println "... " elapsed-ms "ms")
+    (println "... " (long elapsed-ms) "ms")
     (if (zero? (:exit prc))
       (play "success")
       (play "fail"))
