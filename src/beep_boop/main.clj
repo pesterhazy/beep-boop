@@ -13,9 +13,22 @@
          ret# ~expr]
      [(/ (double (- (. System (nanoTime)) start#)) 1000000.0) ret#]))
 
+(def green "\u001B[32m")
+(def red "\u001B[31m")
+
+(defn bar [color width fill-char]
+  (let [reset-color "\u001B[0m"
+        bar (apply str (repeat width fill-char))]
+    (println (str color bar reset-color))))
+
 (defn -main [& args]
   (play "start")
   (let [[elapsed-ms prc] (time-ret (apply shell {:continue true} args))]
+    (bar (if (zero? (:exit prc))
+           green
+           red)
+         60
+         "\u2588")
     (println "... " (long elapsed-ms) "ms")
     (if (zero? (:exit prc))
       (play "success")
