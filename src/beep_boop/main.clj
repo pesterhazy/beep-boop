@@ -5,7 +5,10 @@
 (def root (-> *file* fs/parent fs/parent fs/parent))
 
 (defn play [fname]
-  (process "afplay" (str root "/sounds/" fname ".wav")))
+  (process (or (fs/which "aplay")
+               (fs/which "afplay")
+               (fs/which "play"))
+           (str root "/sounds/" fname ".wav")))
 
 (defmacro time-ret
   [expr]
