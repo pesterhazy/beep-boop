@@ -1,1 +1,2 @@
-{:paths ["src"]}
+{:paths ["src"]
+ :bbin/bin {beep-boop {:main-opts ["-m" "beep-boop.main"]}}}
