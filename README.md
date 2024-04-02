@@ -30,6 +30,6 @@ Turn your audio volume up so you can hear the sound effect! On macOS you'll also
 `beep-boop` works by inspecting the exit status of the command it wraps, so you can easily try it like this:
 
 ```
-beep-boop true
-beep-boop false
+beep-boop /usr/bin/true
+beep-boop /usr/bin/false
 ```
