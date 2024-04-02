@@ -10,6 +10,12 @@
                (fs/which "play"))
            (str root "/sounds/" fname ".wav")))
 
+(defn notify [status]
+  (when (fs/which "osascript")
+    (if (= "success" status)
+      (process "osascript" "-e" "display notification \"\uD83D\uDFE2\" with title \"\u2800\"")
+      (process "osascript" "-e" "display notification \"\uD83D\uDD34\" with title \"\u2800\""))))
+
 (defmacro time-ret
   [expr]
   `(let [start# (. System (nanoTime))
@@ -34,6 +40,10 @@
          "\u2588")
     (println "... " (long elapsed-ms) "ms")
     (if (zero? (:exit prc))
-      (play "success")
-      (play "fail"))
+      (do
+        (notify "success")
+        (play "success"))
+      (do
+        (notify "fail")
+        (play "fail")))
     (System/exit (:exit prc))))
