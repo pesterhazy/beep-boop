@@ -48,24 +48,28 @@
                                                   cmd))))]
       (let [[elapsed-ms prc] (time-ret (apply shell {:continue true} (last cmds)))]
         (let [primary-succeeded? (zero? (:exit prc))
-              secondaries-succeeded? (->> secondaries
-                                          (mapv (fn [prc]
-                                                  (when-not (zero? (:exit @prc))
-                                                    (println "Secondary command failed:" (:cmd prc))
-                                                    (println "********************")
-                                                    (print (:out @prc))
-                                                    (print (:err @prc))
-                                                    (println "********************"))
-                                                  prc))
-                                          (every? (fn [prc]
-                                                    (zero? (:exit @prc)))))
+              [secondary-elapsed-ms secondaries-succeeded?]
+              (time-ret (->> secondaries
+                             (mapv (fn [prc]
+                                     (when-not (zero? (:exit @prc))
+                                       (println "Secondary command failed:" (:cmd prc))
+                                       (println "********************")
+                                       (print (:out @prc))
+                                       (print (:err @prc))
+                                       (println "********************"))
+                                     prc))
+                             (every? (fn [prc]
+                                       (zero? (:exit @prc))))))
               success (and primary-succeeded? secondaries-succeeded?)]
           (bar (if success
                  green
                  red)
                60
                "\u2588")
-          (println "... " (long elapsed-ms) "ms")
+          (if (> secondary-elapsed-ms 10)
+            (println "..." (long elapsed-ms) "ms"
+                     (str "(+" (long secondary-elapsed-ms)) "ms for secondary processes)")
+            (println "..." (long elapsed-ms) "ms"))
           (if success
             (do
               (notify "success")
