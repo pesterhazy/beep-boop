@@ -30,20 +30,47 @@
         bar (apply str (repeat width fill-char))]
     (println (str color bar reset-color))))
 
+(defn parse [args]
+  (let [args (into [] args)]
+    (if (= "--secondary" (first args))
+      (let [end (.indexOf args "END_OF_SECONDARY")]
+        (when (= -1 end)
+          (throw "Expected END_OF_SECONDARY"))
+        (concat [(subvec args 1 end)] (parse (subvec args (inc end)))))
+      [args])))
+
 (defn -main [& args]
-  (play "start")
-  (let [[elapsed-ms prc] (time-ret (apply shell {:continue true} args))]
-    (bar (if (zero? (:exit prc))
-           green
-           red)
-         60
-         "\u2588")
-    (println "... " (long elapsed-ms) "ms")
-    (if (zero? (:exit prc))
-      (do
-        (notify "success")
-        (play "success"))
-      (do
-        (notify "fail")
-        (play "fail")))
-    (System/exit (:exit prc))))
+  (let [cmds (parse args)]
+    (play "start")
+    (let [secondaries (->> (butlast cmds)
+                           (mapv (fn [cmd] (apply process {:out :string
+                                                           :err :string}
+                                                  cmd))))]
+      (let [[elapsed-ms prc] (time-ret (apply shell {:continue true} (last cmds)))]
+        (let [primary-succeeded? (zero? (:exit prc))
+              secondaries-succeeded? (->> secondaries
+                                          (mapv (fn [prc]
+                                                  (when-not (zero? (:exit @prc))
+                                                    (println "Secondary command failed:" (:cmd prc))
+                                                    (println "********************")
+                                                    (print (:out @prc))
+                                                    (print (:err @prc))
+                                                    (println "********************"))
+                                                  prc))
+                                          (every? (fn [prc]
+                                                    (zero? (:exit @prc)))))
+              success (and primary-succeeded? secondaries-succeeded?)]
+          (bar (if success
+                 green
+                 red)
+               60
+               "\u2588")
+          (println "... " (long elapsed-ms) "ms")
+          (if success
+            (do
+              (notify "success")
+              (play "success"))
+            (do
+              (notify "fail")
+              (play "fail"))))
+        (System/exit (:exit prc))))))
