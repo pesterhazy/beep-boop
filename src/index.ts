@@ -4,11 +4,26 @@ import { spawn, spawnSync } from "child_process";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
+import { existsSync } from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 type SoundType = "start" | "failure" | "success";
+
+function notify(status: "success" | "failure"): void {
+  // Use osascript for notifications on macOS
+  if (process.platform === "darwin") {
+    const notification = status === "success" 
+      ? "display notification \"🟢\" with title \"⠀\"" 
+      : "display notification \"🔴\" with title \"⠀\"";
+      
+    spawn("osascript", ["-e", notification], {
+      detached: true,
+      stdio: "ignore",
+    }).unref();
+  }
+}
 
 function playSound(type: SoundType): void {
   // Try both relative paths (for development) and paths relative to __dirname (for production)
@@ -57,11 +72,13 @@ function main(): void {
       throw new Error(`Command exited with code ${result.status}`);
     } else {
       playSound("success");
+      notify("success");
       process.exit(0);
     }
   } catch (error) {
     console.error(`Exception executing command: ${error}`);
     playSound("failure");
+    notify("failure");
     process.exit(1);
   }
 }
