@@ -76,6 +76,15 @@ function playSound(type: SoundType): void {
 function main(): void {
   const args = process.argv.slice(2);
 
+  // Check for --version flag as first argument
+  if (args.length > 0 && args[0] === "--version") {
+    // Read version from package.json
+    const packageJsonPath = path.resolve(__dirname, "../package.json");
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+    console.log(packageJson.version);
+    process.exit(0);
+  }
+
   if (args.length === 0) {
     console.error("Please provide a command to run");
     process.exit(1);
