@@ -16,7 +16,11 @@ const RESET = "\u001B[0m";
 
 type SoundType = "start" | "failure" | "success";
 
-function printBar(color: typeof GREEN | typeof RED, width: number = 80, fillChar: string = "█"): void {
+function printBar(
+  color: typeof GREEN | typeof RED,
+  width: number = 80,
+  fillChar: string = "█",
+): void {
   const bar = fillChar.repeat(width);
   console.log(`${color}${bar}${RESET}`);
 }
@@ -28,13 +32,14 @@ function notify(status: "success" | "failure"): void {
   } else {
     printBar(RED);
   }
-  
+
   // Use osascript for notifications on macOS
   if (process.platform === "darwin") {
-    const notification = status === "success" 
-      ? "display notification \"🟢\" with title \"⠀\"" 
-      : "display notification \"🔴\" with title \"⠀\"";
-      
+    const notification =
+      status === "success"
+        ? 'display notification "🟢" with title "⠀"'
+        : 'display notification "🔴" with title "⠀"';
+
     spawn("osascript", ["-e", notification], {
       detached: true,
       stdio: "ignore",
@@ -50,14 +55,16 @@ function playSound(type: SoundType): void {
     // When running from compiled dist
     path.resolve(__dirname, "sounds", `${type}.wav`),
     // Another possible location
-    path.resolve(__dirname, "../sounds", `${type}.wav`)
+    path.resolve(__dirname, "../sounds", `${type}.wav`),
   ];
-  
+
   // Find the first path that exists
-  const filePath = soundPaths.find(path => fs.existsSync(path));
-  
+  const filePath = soundPaths.find((path) => fs.existsSync(path));
+
   if (!filePath) {
-    throw new Error(`Sound file not found for type: ${type}. Tried paths: ${soundPaths.join(", ")}`);
+    throw new Error(
+      `Sound file not found for type: ${type}. Tried paths: ${soundPaths.join(", ")}`,
+    );
   }
 
   spawn("afplay", [filePath], {
@@ -80,18 +87,25 @@ function main(): void {
   const command = args[0];
   const commandArgs = args.slice(1);
 
+  // Start timing
+  const startTime = process.hrtime.bigint();
+
   try {
     const result = spawnSync(command, commandArgs, { stdio: "inherit" });
+
+    // Calculate elapsed time in milliseconds
+    const endTime = process.hrtime.bigint();
+    const elapsedMs = Number(endTime - startTime) / 1_000_000;
+    console.log(`... ${elapsedMs.toFixed(0)}ms`);
 
     if (result.error) {
       throw new Error(`Error executing command: ${result.error.message}`);
     } else if (result.status !== 0) {
       throw new Error(`Command exited with code ${result.status}`);
-    } else {
-      playSound("success");
-      notify("success");
-      process.exit(0);
     }
+    playSound("success");
+    notify("success");
+    process.exit(0);
   } catch (error) {
     console.error(`Exception executing command: ${error}`);
     playSound("failure");
