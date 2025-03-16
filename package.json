@@ -3,9 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
+  "bin": {
+    "beep-boop": "./dist/index.js"
+  },
   "scripts": {
     "start": "node src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "postbuild": "chmod +x dist/index.js",
+    "prepublishOnly": "npm run build"
   },
   "author": "",
   "license": "ISC",
