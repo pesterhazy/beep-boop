@@ -8,11 +8,17 @@
 
 ## Installation
 
-Check out this repo
-
-npm install -g github:pesterhazy/beep-boop
+```
+git clone https://github.com/pesterhazy/beep-boop
+cd beep-boop
+npm install .
+```
 
 ## Usage
+
+```
+beep-boop --version
+```
 
 Typically `beep-boop` is used as a prefix command wrapping your test runner:
 
