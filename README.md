@@ -1,6 +1,6 @@
 # beep-boop 🤖
 
-** Audiovisual feedback for test runs, simplified**
+**Audiovisual feedback for test runs, simplified**
 
 ![screenshot](screenshot.png)
 
