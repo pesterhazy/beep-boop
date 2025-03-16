@@ -1,28 +1,36 @@
-# Beep boop
+# beep-boop 🤖
 
-A command runner that plays sounds when commands start, succeed, or fail.
+**Audible and visual feedback for test runs**
+
+![screenshot](screenshot.png)
+
+🎶 plays a pleasant sound if your tests succeed and a melancholy sound if your tests fail
 
 ## Installation
 
-```bash
-npm install -g beep-boop
-```
+Check out this repo
+
+npm install -g .
 
 ## Usage
 
-```bash
-beep-boop <command> [arguments]
+Typically `beep-boop` is used as a prefix command wrapping your test runner:
+
+```
+watchexec -- beep-boop npm test
 ```
 
-Examples:
+or 
 
-```bash
-beep-boop ls -la
-beep-boop npm test
-beep-boop curl https://example.com
+```
+watchexec -- beep-boop lein test
 ```
 
-The tool will:
-- Play a startup sound when the command begins
-- Play a success sound when the command succeeds (exit code 0)
-- Play a failure sound when the command fails (non-zero exit code)
+Turn your audio volume up so you can hear the sound effect! On macOS you'll also see a temporary display notification with a red or green icon.
+
+`beep-boop` works by inspecting the exit status of the command it wraps, so you can easily try it like this:
+
+```
+beep-boop /usr/bin/true
+beep-boop /usr/bin/false
+```
