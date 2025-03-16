@@ -9,9 +9,26 @@ import { existsSync } from "fs";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// ANSI color codes
+const GREEN = "\u001B[32m";
+const RED = "\u001B[31m";
+const RESET = "\u001B[0m";
+
 type SoundType = "start" | "failure" | "success";
 
+function printBar(color: typeof GREEN | typeof RED, width: number = 80, fillChar: string = "█"): void {
+  const bar = fillChar.repeat(width);
+  console.log(`${color}${bar}${RESET}`);
+}
+
 function notify(status: "success" | "failure"): void {
+  // Print colored bar
+  if (status === "success") {
+    printBar(GREEN);
+  } else {
+    printBar(RED);
+  }
+  
   // Use osascript for notifications on macOS
   if (process.platform === "darwin") {
     const notification = status === "success" 
