@@ -1,16 +1,16 @@
 # beep-boop 🤖
 
-**Audible and visual feedback for test runs**
+** Audiovisual feedback for test runs, simplified**
 
 ![screenshot](screenshot.png)
 
-🎶 plays a pleasant sound if your tests succeed and a melancholy sound if your tests fail
+🎶 plays a pleasant sound if your tests succeed and a melancholy one if they fail
 
 ## Installation
 
 Check out this repo
 
-npm install -g .
+npm install -g github:pesterhazy/beep-boop
 
 ## Usage
 
