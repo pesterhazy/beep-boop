@@ -3,6 +3,7 @@
 import { spawn, spawnSync } from "child_process";
 import path from "path";
 import { fileURLToPath } from "url";
+import fs from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,23 +11,30 @@ const __dirname = path.dirname(__filename);
 type SoundType = "start" | "failure" | "success";
 
 function playSound(type: SoundType): void {
-  const soundFiles: Record<SoundType, string> = {
-    start: path.resolve(__dirname, "../sounds/start.wav"),
-    failure: path.resolve(__dirname, "../sounds/failure.wav"),
-    success: path.resolve(__dirname, "../sounds/success.wav"),
-  };
+  // Try both relative paths (for development) and paths relative to __dirname (for production)
+  const soundPaths = [
+    // When running from source with ts-node
+    path.resolve(process.cwd(), "sounds", `${type}.wav`),
+    // When running from compiled dist
+    path.resolve(__dirname, "sounds", `${type}.wav`),
+    // Another possible location
+    path.resolve(__dirname, "../sounds", `${type}.wav`)
+  ];
+  
+  // Find the first path that exists
+  const filePath = soundPaths.find(path => fs.existsSync(path));
+  
+  if (!filePath) {
+    throw new Error(`Sound file not found for type: ${type}. Tried paths: ${soundPaths.join(", ")}`);
+  }
 
-  const filePath = soundFiles[type];
-
-  // Use spawn (not spawnSync) to run in background without waiting
   spawn("afplay", [filePath], {
     detached: true,
-    stdio: 'ignore'
-  }).unref(); // Unreference the child process so parent can exit
+    stdio: "ignore",
+  }).unref();
 }
 
 function main(): void {
-  // Get command arguments (skip node and script path)
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
@@ -34,7 +42,6 @@ function main(): void {
     process.exit(1);
   }
 
-  // Play start sound
   playSound("start");
 
   // Run the provided command
@@ -42,19 +49,13 @@ function main(): void {
   const commandArgs = args.slice(1);
 
   try {
-    console.log(`Running command: ${command} ${commandArgs.join(" ")}`);
     const result = spawnSync(command, commandArgs, { stdio: "inherit" });
-    
+
     if (result.error) {
-      console.error(`Error executing command: ${result.error.message}`);
-      playSound("failure");
-      process.exit(1);
+      throw new Error(`Error executing command: ${result.error.message}`);
     } else if (result.status !== 0) {
-      console.log(`Command exited with code ${result.status}`);
-      playSound("failure");
-      process.exit(result.status);
+      throw new Error(`Command exited with code ${result.status}`);
     } else {
-      console.log("Command executed successfully");
       playSound("success");
       process.exit(0);
     }

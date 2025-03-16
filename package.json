@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node src/index.ts",
     "build": "tsc",
-    "postbuild": "chmod +x dist/index.js",
+    "postbuild": "chmod +x dist/index.js && mkdir -p dist/sounds && cp sounds/*.wav dist/sounds/",
     "prepublishOnly": "npm run build"
   },
   "author": "",
