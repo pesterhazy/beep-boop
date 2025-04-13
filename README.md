@@ -38,7 +38,7 @@ watchexec -- beep-boop npm test
 or 
 
 ```
-watchexec -- beep-boop lein test
+watchexec -- beep-boop your-test-command
 ```
 
 Turn your audio volume up so you can hear the sound effect! On macOS you'll also see a temporary display notification with a red or green icon.
