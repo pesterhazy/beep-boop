@@ -8,15 +8,24 @@
 
 ## Installation
 
+Global:
+
 ```
-git clone https://github.com/pesterhazy/beep-boop
-cd beep-boop
-npm install .
+npm install -g @pesterhazy/beep-boop
+```
+
+For your project:
+
+
+```
+npm install @pesterhazy/beep-boop
 ```
 
 ## Usage
 
 ```
+npx beep-boop --version
+# or if installed globally
 beep-boop --version
 ```
 
