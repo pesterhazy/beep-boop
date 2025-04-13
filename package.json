@@ -1,17 +1,22 @@
 {
-  "name": "beep-boop",
+  "name": "@pesterhazy/beep-boop",
   "version": "0.1.1",
   "description": "",
   "type": "module",
+  "main": "dist/index.js",
   "bin": {
     "beep-boop": "./dist/index.js"
   },
+  "files": [
+    "dist/"
+  ],
   "scripts": {
     "start": "node src/index.ts",
     "build": "tsc",
     "postbuild": "chmod +x dist/index.js && mkdir -p dist/sounds && cp sounds/*.wav dist/sounds/",
     "prepublishOnly": "npm run build"
   },
+  "prepublishOnly": "npm run build",
   "author": "",
   "license": "ISC",
   "devDependencies": {
