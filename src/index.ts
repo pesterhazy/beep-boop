@@ -4,7 +4,6 @@ import { spawn, spawnSync } from "child_process";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
-import { existsSync } from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,7 +18,7 @@ type SoundType = "start" | "failure" | "success";
 function printBar(
   color: typeof GREEN | typeof RED,
   width: number = 80,
-  fillChar: string = "█",
+  fillChar: string = "█"
 ): void {
   const bar = fillChar.repeat(width);
   console.log(`${color}${bar}${RESET}`);
@@ -63,7 +62,9 @@ function playSound(type: SoundType): void {
 
   if (!filePath) {
     throw new Error(
-      `Sound file not found for type: ${type}. Tried paths: ${soundPaths.join(", ")}`,
+      `Sound file not found for type: ${type}. Tried paths: ${soundPaths.join(
+        ", "
+      )}`
     );
   }
 

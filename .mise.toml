@@ -1,2 +1,4 @@
 [tools]
 node = "23"
+watchexec = "latest"
+"ubi:egoist/dum" = "latest"
