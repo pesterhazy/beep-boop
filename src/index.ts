@@ -18,7 +18,7 @@ type SoundType = "start" | "failure" | "success";
 function printBar(
   color: typeof GREEN | typeof RED,
   width: number = 80,
-  fillChar: string = "█"
+  fillChar: string = "█",
 ): void {
   const bar = fillChar.repeat(width);
   console.log(`${color}${bar}${RESET}`);
@@ -63,8 +63,8 @@ function playSound(type: SoundType): void {
   if (!filePath) {
     throw new Error(
       `Sound file not found for type: ${type}. Tried paths: ${soundPaths.join(
-        ", "
-      )}`
+        ", ",
+      )}`,
     );
   }
 
